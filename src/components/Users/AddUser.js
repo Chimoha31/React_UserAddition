@@ -7,13 +7,22 @@ import Card from "../UI/Card";
 const AddUser = (props) => {
   const [enteredUsername, setEnteredUsername] = useState("");
   const [enteredAge, setEnteredAge] = useState("");
+  const [error, setError] = useState();
 
   const addUserHandler = (e) => {
     e.preventDefault();
     if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      setError({
+        title: "Invalid input",
+        message: "Please enter a valid name and age (non-empty value)",
+      });
       return;
     }
     if (+enteredAge < 1) {
+      setError({
+        title: "Invalid number",
+        message: "Please enter a valid number",
+      });
       return;
     }
     props.onAddUser(enteredUsername, enteredAge);
@@ -28,9 +37,19 @@ const AddUser = (props) => {
     setEnteredAge(e.target.value);
   };
 
+  const errorHandler = () => {
+    setError(null);
+  };
+
   return (
     <div>
-      <ErrorModal title="An error occured!" message="Something went wromg!" />
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        />
+      )}
       <Card className={classes.input}>
         <form onSubmit={addUserHandler}>
           <label htmlFor="username">Username</label>
